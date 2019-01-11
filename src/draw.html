@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas drawing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content="-1" />
+    <style>
+        .draw .text {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 20em;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .draw .text textarea {
+            flex: 1;
+        }
+
+        .draw .text label {
+            align-items: center;
+            display: flex;
+            flex: 0 2em;
+            justify-content: space-between;
+        }
+
+        .draw .text label.checkbox {
+            justify-content: flex-start;
+        }
+
+        .draw .text label input[type=range] {
+            flex: 0 60%;
+        }
+
+        .draw .canvas {
+            width: calc(100vw - 20em);
+            height: 100vh;
+            background: linear-gradient(180deg, #eee 1px, transparent 1px) repeat 0 0 / 100% 200px,
+                linear-gradient(270deg, #eee 1px, transparent 1px) repeat 0 0 / 100px 100%,
+                linear-gradient(180deg, #bbb 1px, transparent 1px) repeat-x 0 25px / 100% 200px,
+                linear-gradient(180deg, #bbb 1px, transparent 1px) repeat-x 0 200px / 100% 200px,
+                linear-gradient(180deg, #bbb 1px, transparent 1px) repeat-x 0 295px / 100% 200px,
+                linear-gradient(180deg, #aaf 1px, transparent 1px) repeat-x 0 160px / 100% 200px;
+        }
+
+        .dialog-wrapper {
+            background-color: rgba(0, 0, 0, .2);
+            width: 100vw;
+            height: 100vh;
+            padding: 3em 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+
+        .dialog-wrapper.open {
+            display: block;
+        }
+
+        .dialog-wrapper .dialog {
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 0 auto;
+            width: 40em;
+            height: 20em;
+            padding: 1em;
+        }
+
+        .dialog-wrapper .dialog h2 {
+            margin: 0;
+            padding: 0;
+            line-height: 2;
+        }
+
+        .dialog-wrapper .dialog textarea {
+            flex: 0 60%;
+        }
+
+        .dialog-wrapper .dialog label {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .dialog-wrapper .dialog label input {
+            flex: 0 60%;
+        }
+
+        .dialog-wrapper .dialog .buttons {
+            display: flex;
+        }
+
+        .dialog-wrapper .dialog .buttons button {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="draw">
+        <div class="canvas">
+            <canvas></canvas>
+        </div>
+        <div class="text">
+            <textarea id="data"></textarea>
+            <label>
+                Zoom
+                <input id="zoom" type="range" min="10" max="1000" value="100"/>
+            </label>
+            <label>
+                Offset X
+                <input id="offset-x" type="range" min="-100" max="100" value="0"/>
+            </label>
+            <label>
+                Offset Y
+                <input id="offset-y" type="range" min="-100" max="100" value="0"/>
+            </label>
+            <label class="checkbox">
+                <input id="curve-traces" type="checkbox" checked/>
+                Curve traces
+            </label>
+            <label class="checkbox">
+                <input id="position-traces" type="checkbox" checked/>
+                Position traces
+            </label>
+            <button type="button" id="import">Import</button>
+        </div>
+    </div>
+    <div class="dialog-wrapper">
+        <div class="dialog">
+            <h2>Import</h2>
+            <textarea id="import-content"></textarea>
+            <label>
+                Offset
+                <input id="import-offset" type="number"/>
+            </label>
+            <div class="buttons">
+                <button id="import-button" type="button">Import</button>
+                <button id="import-cancel" type="button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var text;
+            var zoom;
+            var offsetX;
+            var offsetY;
+            var curveTraces;
+            var positionTraces;
+            var importButton;
+            var canvas;
+            var ctx;
+            var importGroup;
+
+            function init() {
+                const container = document.querySelector('.draw');
+                const dialog = document.querySelector('.dialog-wrapper');
+                text = container.querySelector('.text textarea');
+                zoom = container.querySelector('.text #zoom');
+                offsetX = container.querySelector('.text #offset-x');
+                offsetY = container.querySelector('.text #offset-y');
+                curveTraces = container.querySelector('.text #curve-traces');
+                positionTraces = container.querySelector('.text #position-traces');
+                importButton = container.querySelector('.text #import');
+                canvas = container.querySelector('.canvas canvas');
+                importGroup = {
+                    dialog: dialog,
+                    text: dialog.querySelector('#import-content'),
+                    offset: dialog.querySelector('#import-offset'),
+                    accept: dialog.querySelector('#import-button'),
+                    cancel: dialog.querySelector('#import-cancel')
+                };
+                ctx = canvas.getContext('2d');
+
+                text.addEventListener('input', draw);
+                zoom.addEventListener('input', draw);
+                offsetX.addEventListener('input', draw);
+                offsetY.addEventListener('input', draw);
+                curveTraces.addEventListener('change', draw);
+                positionTraces.addEventListener('change', draw);
+                importButton.addEventListener('click', toggleDialog);
+                importGroup.cancel.addEventListener('click', toggleDialog);
+                importGroup.accept.addEventListener('click', importData);
+            }
+
+            function toggleDialog() {
+                importGroup.dialog.classList.toggle('open');
+                importGroup.text.value = '';
+                importGroup.offset.value = 0;
+            }
+
+            function importData() {
+                try {
+                    const offset = importGroup.offset.valueAsNumber || 0;
+                    let data = JSON.parse(importGroup.text.value);
+                    data = data.map(d => d.map((v, i) => isNaN(v) ? v : i % 2 ? v + offset : v));
+                    const content = data.map(d => d.join(' ')).join('\r\n');
+                    text.value += '\r\n' + content;
+                    draw();
+                    toggleDialog();
+                } catch (x) {
+                    console.error(x);
+                    alert(x);
+                }
+            }
+
+            function draw() {
+                setCanvasSize(canvas);
+                const data = text.value.split('\n');
+                let currentPosition = {
+                    x: 0,
+                    y: 0
+                };
+                data.forEach((l, i, arr) => currentPosition = render(l.split(' '), currentPosition, zoom.valueAsNumber, {x: offsetX.valueAsNumber, y: offsetY.valueAsNumber}, arr[i - 1]));
+            }
+
+            function setCanvasSize(canvas) {
+                const style = window.getComputedStyle(canvas.parentElement);
+                canvas.width = style.width.replace(/\D/g, '');
+                canvas.height = style.height.replace(/\D/g, '');
+            }
+
+            function setStroke(color, width, fill) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.fillStyle = fill || 'transparent';
+            }
+
+            function render(data, currentPosition, zoom, offset, previousData) {
+                let d = data.map(i => i);
+                const t = d.shift();
+                d = d.map((v, i) => (Number(v) + (i % 2 ? offset.y : offset.x)) * zoom / 100);
+                if (previousData) {
+                    previousData = previousData.split(' ').map((v, i) => isNaN(v) ? v : (v * zoom / 100));
+                }
+                try {
+                    switch (t) {
+                        case 'M':
+                            currentPosition = moveTo(d, currentPosition.x, currentPosition.y);
+                            break;
+                        case 'L':
+                            currentPosition = lineTo(d, currentPosition.x, currentPosition.y);
+                            break;
+                        case 'H':
+                            currentPosition = horizontalLineTo(d, currentPosition.x, currentPosition.y);
+                            break;
+                        case 'V':
+                            currentPosition = verticalLineTo(d, currentPosition.x, currentPosition.y);
+                        case 'C':
+                            currentPosition = bezierCurveTo(d, currentPosition.x, currentPosition.y);
+                            break;
+                        case 'Q':
+                            currentPosition = quadraticCurveTo(d, currentPosition.x, currentPosition.y);
+                            break;
+                        case 'S':
+                            currentPosition = subsequentCurveTo(d, currentPosition.x, currentPosition.y, previousData);
+                    }
+                } catch (x) {
+                    console.error(x);
+                }
+                const x = currentPosition.x;
+                const y = currentPosition.y;
+                if (positionTraces.checked) {
+                    ctx.beginPath();
+                    setStroke('#000', 2);
+                    ctx.moveTo(x - 4, y - 4);
+                    ctx.lineTo(x + 4, y + 4);
+                    ctx.moveTo(x - 4, y + 4);
+                    ctx.lineTo(x + 4, y - 4);
+                    ctx.moveTo(x, y);
+                    ctx.stroke();
+                }
+                return currentPosition;
+            }
+
+            function moveTo(d, currentX, currentY) {
+                if (d.length === 2) {
+                    ctx.moveTo(d[0], d[1]);
+                    ctx.stroke();
+                    currentX = d[0];
+                    currentY = d[1];
+                }
+                return {
+                    x: currentX,
+                    y: currentY
+                };
+            }
+
+            function lineTo(d, currentX, currentY) {
+                if (d.length === 2) {
+                    setStroke('red', 3);
+                    ctx.lineTo(d[0], d[1]);
+                    ctx.stroke();
+                    currentX = d[0];
+                    currentY = d[1];
+                }
+                return {
+                    x: currentX,
+                    y: currentY
+                };
+            }
+
+            function horizontalLineTo(d, currentX, currentY) {
+                return lineTo(d.concat([currentY]), currentX, currentY);
+            }
+
+            function verticalLineTo(d, currentX, currentY) {
+                return lineTo([currentX].concat(d), currentX, currentY);
+            }
+
+            function bezierCurveTo(d, currentX, currentY) {
+                if (d.length === 6) {
+                    ctx.beginPath();
+                    setStroke('red', 3);
+                    ctx.moveTo(currentX, currentY);
+                    ctx.bezierCurveTo(d[0], d[1], d[2], d[3], d[4], d[5]);
+                    ctx.stroke();
+                    if (curveTraces.checked) {
+                        ctx.beginPath();
+                        setStroke('blue', 1);
+                        ctx.moveTo(currentX, currentY);
+                        ctx.lineTo(d[0], d[1]);
+                        ctx.stroke();
+                        ctx.moveTo(d[2], d[3]);
+                        ctx.lineTo(d[4], d[5]);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        setStroke('black', .5, 'gray');
+                        ctx.arc(d[0], d[1], 3, 0, 360);
+                        ctx.fill();
+                        ctx.stroke();
+                        ctx.moveTo(d[2], d[3]);
+                        ctx.arc(d[2], d[3], 3, 0, 360);
+                        ctx.stroke();
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                    currentX = d[4];
+                    currentY = d[5];
+                }
+                return {
+                    x: currentX,
+                    y: currentY
+                };
+            }
+
+            function quadraticCurveTo(d, currentX, currentY) {
+                if (d.length === 4) {
+                    setStroke('red', 3);
+                    ctx.beginPath();
+                    ctx.moveTo(currentX, currentY);
+                    ctx.quadraticCurveTo(d[0], d[1], d[2], d[3]);
+                    ctx.stroke();
+                    if (curveTraces.checked) {
+                        ctx.beginPath();
+                        setStroke('blue', 1);
+                        ctx.moveTo(currentX, currentY);
+                        ctx.lineTo(d[0], d[1]);
+                        ctx.lineTo(d[2], d[3]);
+                        ctx.stroke();
+                    }
+                    currentX = d[2];
+                    currentY = d[3];
+                }
+                return {
+                    x: currentX,
+                    y: currentY
+                };
+            }
+
+            function subsequentCurveTo(d, currentX, currentY, previous) {
+                let x;
+                let y;
+                const previousType = previous[0];
+                switch (previousType) {
+                    case 'C':
+                    case 'Q':
+                        const x1 = previous[previous.length - 4];
+                        const y1 = previous[previous.length - 3];
+                        const x2 = previous[previous.length - 2];
+                        const y2 = previous[previous.length - 1];
+                        x = currentX + x2 - x1;
+                        y = currentY + y2 - y1;
+                        break;
+                    default:
+                        x = currentX;
+                        y = currentY;
+                        break;
+                }
+                return bezierCurveTo([x, y].concat(d), currentX, currentY);
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>

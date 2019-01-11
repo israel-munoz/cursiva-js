@@ -1,0 +1,32 @@
+<html>
+<head>
+    <meta http-equiv="refresh" content="-1" />
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <div class="controls">
+        <label>
+            Text
+            <input type="text" id="text-input" />
+        </label>
+        <label>
+            Size
+            <input type="range" id="text-size" min=".5" max="10" value="6" step=".5" />
+        </label>
+        <label>
+            Speed
+            <input type="range" id="text-speed" min="75" max="95" value="80" step="1" />
+        </label>
+        <label>
+            Color
+            <input type="color" id="text-color" value="#ff0000"/>
+        </label>
+        <label>
+            <button id="run" class="run"><span class="run">Run</span> <span class="stop">Stop</span></button>
+        </label>
+    </div>
+    <div class="canvas-container">
+        <canvas id="drawing" width="500" height="500"></canvas>
+    </div>
+</body>
+</html>
