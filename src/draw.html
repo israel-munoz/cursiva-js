@@ -99,6 +99,14 @@
         .dialog-wrapper .dialog .buttons button {
             flex: 1;
         }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 300px;
+        }
     </style>
 </head>
 
@@ -106,6 +114,9 @@
     <div class="draw">
         <div class="canvas">
             <canvas></canvas>
+            <svg>
+                <path fill="none" stroke="#000" stroke-width="1" d="m0 300 h150 v-300 h-150 v300 l150 -300z"/>
+            </svg>
         </div>
         <div class="text">
             <textarea id="data"></textarea>
@@ -240,6 +251,7 @@
                 if (previousData) {
                     previousData = previousData.split(' ').map((v, i) => isNaN(v) ? v : (v * zoom / 100));
                 }
+                console.log(d);
                 try {
                     switch (t) {
                         case 'M':

@@ -11,6 +11,21 @@
     array.prototype.last = array.prototype.last || function (defaultValue) {
         return this.length ? this[this.length - 1] : defaultValue || null;
     }
+
+    array.prototype.flat = array.prototype.flat || function (depth) {
+        const result = [];
+        const concat = (level, index) => {
+            level.forEach(item => {
+                if (index < depth && item instanceof Array) {
+                    concat(item, index + 1);
+                } else {
+                    result.push(item);
+                }
+            });
+        };
+        concat(this, 0);
+        return result;
+    }
 })(Array);
 
 (function (context) {
@@ -29,11 +44,15 @@
     }
 
     context.prototype.move = function (x, y) {
+        const time = 
+            (Math.abs(this.currentPosition.x - x) + Math.abs(this.currentPosition.y - y)) / 2;
         return new Promise(resolve => {
-            this.moveTo(x, y);
-            this.currentPosition.x = x;
-            this.currentPosition.y = y;
-            resolve();
+            setTimeout(() => {
+                this.moveTo(x, y);
+                this.currentPosition.x = x;
+                this.currentPosition.y = y;
+                resolve();
+            }, time);
         });
     }
 
