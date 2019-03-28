@@ -244,7 +244,7 @@
         for (let i = 0; i < text.length; i += 1) {
             let char = text[i];
             if (!letters[char]) {
-                let letter = data[char] || letters[' '];
+                let letter = data[char] || data[' '];
                 letters[char] = letter;
                 if (letter.ref) {
                     letters[letter.ref] = letters[letter.ref] || data[letter.ref] || letters[' '];
