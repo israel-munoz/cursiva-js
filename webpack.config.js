@@ -36,10 +36,7 @@ module.exports = {
                     minimize: true
                 }
             }, {
-                loader: 'css-loader',
-                options: {
-                    minimize: true
-                }
+                loader: 'css-loader'
             }],
             exclude: /node_modules/
         }, {
