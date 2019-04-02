@@ -4,7 +4,8 @@
     "description": "Script typing.",
     "scripts": {
         "build": "webpack --mode production --progress --colors",
-        "watch": "webpack --watch --mode development --progress --colors --port 1000"
+        "watch": "webpack --watch --mode development --progress --colors --port 1000",
+        "start": "webpack-dev-server --color"
     },
     "author": {
         "name": "Israel Muñoz",
@@ -27,6 +28,7 @@
         "style-loader": "^0.23.1",
         "uglifyjs-webpack-plugin": "^2.1.2",
         "webpack": "^4.29.6",
-        "webpack-cli": "^3.3.0"
+        "webpack-cli": "^3.3.0",
+        "webpack-dev-server": "^3.2.1"
     }
 }

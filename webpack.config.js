@@ -12,6 +12,16 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     devtool: isProduction ? null : 'inline-source-map',
+    devServer: {
+        contentBase: path.join(__dirname, 'dist'),
+        compress: true,
+        port: 1000,
+        watchContentBase: true
+    },
+    watch: true,
+    watchOptions: {
+        ignored: /node_modules/
+    },
     resolve: {
         extensions: ['.js']
     },
