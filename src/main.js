@@ -14,22 +14,40 @@
             })
             .then(response => response.json());
     }
+    require('./assets/images/favicon.png');
+    require('./assets/images/banner.png');
+    require('./assets/images/email.svg');
+    require('./assets/images/facebook.svg');
+    require('./assets/images/instagram.svg');
+    require('./assets/images/linkedin.svg');
+    require('./assets/images/twitter.svg');
     require('./assets/styles/main.css');
     require('./helpers');
 
+    var langButtons;
     var textInput;
     var textSize;
     var textSpeed;
-    var textColor;
+    var checkGuideColor;
+    var textGuideColor;
+    var checkDrawColor;
+    var textDrawColor;
     var runButton;
+    var charsButton;
+    var charsList;
     var canvas;
     var ctx;
+    var aboutLink;
+    var aboutClose;
 
     const settings = {
         size: 1,
         speed: 10,
         width: 3,
-        color: '#ff0000',
+        useGuide: true,
+        guideColor: '#dddddd',
+        draw: true,
+        drawColor: '#ff0000',
         drawing: false,
         setSize: function (value) {
             this.size = value / 5;
@@ -42,28 +60,57 @@
             this.speed = 10 - value;
             ctx.animationTime = this.speed;
         },
-        setColor: function (value) {
-            this.color = value;
+        setUseGuide: function (value) {
+            this.useGuide = value;
+        },
+        setGuideColor: function (value) {
+            this.guideColor = value;
+        },
+        setDraw: function (value) {
+            this.draw = value;
+        },
+        setDrawColor: function (value) {
+            this.drawColor = value;
         }
     }
 
     function init() {
+        langButtons = document.querySelector('header .lang');
         let controls = document.querySelector('.controls');
         textInput = controls.querySelector('#text-input');
         textSize = controls.querySelector('#text-size');
         textSpeed = controls.querySelector('#text-speed');
-        textColor = controls.querySelector('#text-color');
+        checkGuideColor = controls.querySelector('#check-guide-color');
+        textGuideColor = controls.querySelector('#text-guide-color');
+        checkDrawColor = controls.querySelector('#check-draw-color');
+        textDrawColor = controls.querySelector('#text-draw-color');
         runButton = controls.querySelector('#run');
+        charsButton = controls.querySelector('#show-chars');
+        charsList = controls.querySelector('#chars-list');
         canvas = document.querySelector('#drawing');
         ctx = canvas.getContext('2d');
+        aboutLink = document.querySelector('#about-link');
+        aboutClose = document.querySelector('#about-close');
         settings.setSize(textSize.valueAsNumber);
         settings.setSpeed(textSpeed.valueAsNumber);
-        settings.setColor(textColor.value);
+        settings.setUseGuide(checkGuideColor.checked);
+        settings.setGuideColor(textGuideColor.value);
+        settings.setDraw(checkDrawColor.checked);
+        settings.setDrawColor(textDrawColor.value);
         bindEvents();
+        getSupportedChars();
         setCanvasSize(ctx.canvas);
+        document.querySelector('html').lang = navigator.language.split('-')[0] || '';
     }
 
     function bindEvents() {
+        langButtons.addEventListener('click', (evt) => {
+            let lang = evt.target.dataset.lang;
+            if (lang) {
+                document.querySelector('html').lang = lang;
+            }
+        });
+
         runButton.addEventListener('click', () => {
             if (document.body.classList.contains('running')) {
                 ctx.cancelDrawing = true;
@@ -81,9 +128,48 @@
             settings.setSpeed(evt.target.valueAsNumber);
         });
 
-        textColor.addEventListener('change', (evt) => {
-            settings.setColor(evt.target.value);
+        checkGuideColor.addEventListener('change', (evt) => {
+            settings.setUseGuide(evt.target.checked);
+        })
+
+        textGuideColor.addEventListener('change', (evt) => {
+            settings.setGuideColor(evt.target.value);
         });
+
+        checkDrawColor.addEventListener('change', (evt) => {
+            settings.setDraw(evt.target.checked);
+        })
+
+        textDrawColor.addEventListener('change', (evt) => {
+            settings.setDrawColor(evt.target.value);
+        });
+
+        charsButton.addEventListener('click', (evt) => {
+            const chars = evt.currentTarget.parentElement;
+            if (chars.classList.contains('show')) {
+                chars.classList.remove('show');
+            } else {
+                chars.classList.add('show');
+            }
+        });
+
+        aboutLink.addEventListener('click', (evt) => {
+            evt.preventDefault();
+            document.querySelector('#about').classList.add('show');
+        });
+
+        aboutClose.addEventListener('click', (evt) => {
+            evt.preventDefault();
+            document.querySelector('#about').classList.remove('show');
+        });
+    }
+
+    function getSupportedChars() {
+        const letters = require('./assets/data/letters.json');
+        charsList.innerHTML += Object.keys(letters)
+            .filter(c => !!c.trim())
+            .map(c => `&#${c.charCodeAt()};`)
+            .join(' ');
     }
 
     function setCanvasSize(canvas, width, height) {
@@ -149,7 +235,7 @@
         let row = [];
         let word = [];
         const letters = getLetters(text);
-        let symbolX = 0;
+        let symbolX = 10;
         let symbolY = 0;
         const lineHeight = 300 * settings.size;
         const maxWidth = canvas.width;
@@ -175,7 +261,7 @@
                     (letter.breakLine && symbolX > maxWidth)) {
                     rows.push(row);
                     row = [];
-                    symbolX = 0;
+                    symbolX = 10;
                     symbolY += lineHeight;
                 }
                 if (afterWord.length) {
@@ -220,22 +306,28 @@
 
         ctx.clear();
         ctx.lineCap = 'round';
-        ctx.init(settings.width, '#ddd');
-        data.forEach(row => row.forEach(word => word.forEach(line => line.forEach(letter => render(letter, false)))));
-        ctx.stroke();
-
-        let i = -1;
-        let symbol;
-        const drawSymbol = () => {
-            i += 1;
-            symbol = all[i];
-            if (symbol) {
-                draw(symbol).then(drawSymbol);
-            } else {
-                stop();
-            }
+        if (settings.useGuide) {
+            ctx.init(settings.width, settings.guideColor);
+            data.forEach(row => row.forEach(word => word.forEach(line => line.forEach(letter => render(letter, false)))));
+            ctx.stroke();
         }
-        drawSymbol();
+
+        if (settings.draw) {
+            let i = -1;
+            let symbol;
+            const drawSymbol = () => {
+                i += 1;
+                symbol = all[i];
+                if (symbol) {
+                    draw(symbol).then(drawSymbol);
+                } else {
+                    stop();
+                }
+            }
+            drawSymbol();
+        } else {
+            stop();
+        }
     }
 
     function getLetters(text) {
@@ -266,12 +358,15 @@
     }
 
     function symbolLastPosition(symbol) {
-        const last = symbol[symbol.length - 1];
-        return last[last.length - 2];
+        if (symbol.length) {
+            const last = symbol[symbol.length - 1];
+            return last[last.length - 2];
+        }
+        return 0;
     }
 
     function draw(letter) {
-        ctx.init(settings.width, settings.color);
+        ctx.init(settings.width, settings.drawColor);
         return new Promise(resolve => {
             let i = -1;
             const drawLine = () => {

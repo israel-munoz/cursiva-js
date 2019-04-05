@@ -1,32 +1,193 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
+    <title>cursiva-js</title>
+    <meta charset="utf-8" />
     <meta http-equiv="refresh" content="-1" />
-    <link rel="stylesheet" href="./styles.css" />
+    <meta name="viewport" content="width=device-width,scale=1" />
+    <meta name="author" content="Israel Muñoz, israel.munoz.v@gmail.com" />
+    <meta name="description" content="JavaScript experiment for drawing text in script typing." />
+    <meta name="keywords" content="HTML, JavaScript, CSS, Canvas" />
+    <meta name="url" content="http://experiments.destesoft.com/cursiva/" />
+    <meta property="og:title" content="cursiva-js" />
+    <meta property="og:site_name" content="cursiva-js" />
+    <meta property="og:description" content="JavaScript experiment for drawing text in script typing." />
+    <meta property="og:url" content="http://experiments.destesoft.com/cursiva/" />
+    <meta property="og:image" content="http://experiments.destesoft.com/cursiva/images/banner.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="http://experiments.destesoft.com/cursiva/">
+    <meta name="twitter:creator" content="@isra_mv">
+    <meta name="twitter:title" content="cursiva-js">
+    <meta name="twitter:description" content="JavaScript experiment for drawing text in script typing.">
+    <meta name="twitter:image" content="http://experiments.destesoft.com/cursiva/images/banner.png">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500|Roboto+Mono:400,500,600" rel="stylesheet" />
+    <link rel="shortcut icon" href="images/favicon.png" type="image/png" />
 </head>
+
 <body>
-    <div class="controls">
-        <label>
-            Text
-            <input type="text" id="text-input" />
-        </label>
-        <label>
-            Size
-            <input type="range" id="text-size" min=".5" max="10" value="6" step=".5" />
-        </label>
-        <label>
-            Speed
-            <input type="range" id="text-speed" min="0" max="7" value="5" step="1" />
-        </label>
-        <label>
-            Color
-            <input type="color" id="text-color" value="#ff0000"/>
-        </label>
-        <label>
-            <button id="run" class="run"><span class="run">Run</span> <span class="stop">Stop</span></button>
-        </label>
-    </div>
-    <div class="canvas-container">
-        <canvas id="drawing" width="500" height="500"></canvas>
-    </div>
+    <img class="banner" src="images/banner.png" alt="Banner" />
+    <header>
+        <h1>cursiva-js</h1>
+        <div class="lang">
+            <button data-lang="en">English</button>
+            <button data-lang="es">Espa&ntilde;ol</button>
+        </div>
+    </header>
+    <main>
+        <div class="controls">
+            <div class="control">
+                <label for="text-input">
+                    <span lang="en">Text</span>
+                    <span lang="es">Texto</span>
+                </label>
+                <textarea id="text-input"></textarea>
+            </div>
+            <div class="control">
+                <label for="text-size">
+                    <span lang="en">Size</span>
+                    <span lang="es">Tama&ntilde;o</span>
+                </label>
+                <input type="range" id="text-size" min=".5" max="10" value="6" step=".5" />
+            </div>
+            <div class="control">
+                <label for="text-speed">
+                    <span lang="en">Speed</span>
+                    <span lang="es">Velocidad</span>
+                </label>
+                <input type="range" id="text-speed" min="0" max="7" value="5" step="1" />
+            </div>
+            <div class="control">
+                <label>
+                    <input type="checkbox" id="check-guide-color" checked />
+                    <span lang="en">Guide color</span>
+                    <span lang="es">Color de gu&iacute;a</span>
+                </label>
+                <input type="color" id="text-guide-color" value="#dddddd" />
+            </div>
+            <div class="control">
+                <label>
+                    <input type="checkbox" id="check-draw-color" checked />
+                    <span lang="en">Draw color</span>
+                    <span lang="es">Color de dibujado</span>
+                </label>
+                <input type="color" id="text-draw-color" value="#ff0000" />
+            </div>
+            <div class="control">
+                <button id="run" class="run">
+                    <span class="run">
+                        <span lang="en">Run</span>
+                        <span lang="es">Ejecutar</span>
+                    </span>
+                    <span class="stop">
+                        <span lang="en">Stop</span>
+                        <span lang="es">Detener</span>
+                    </span></button>
+            </div>
+            <div class="chars">
+                <button id="show-chars">
+                    <span lang="en">Supported characters</span>
+                    <span lang="es">Caracteres soportados</span>
+                </button>
+                <pre id="chars-list">
+                    <span><span lang="en">White space</span>
+                        <span lang="es">Espacio en blanco</span></span>,
+                    <span><span lang="en">line break</span>
+                        <span lang="es">salto de l&iacute;nea</span></span>, 
+                </pre>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="drawing" width="500" height="500"></canvas>
+        </div>
+    </main>
+    <footer>
+        Israel Mu&ntilde;oz
+        <a href="mailto:israel.munoz.v@gmail.com" title="israel.munoz.v@gmail.com">
+            <img src="images/email.svg" alt="Email" />
+        </a>
+        <a href="https://www.linkedin.com/in/israelmunoz" title="LinkedIn" target="_blank">
+            <img src="images/linkedin.svg" alt="LinkedIn" />
+        </a>
+        <a href="https://www.facebook.com/isra.mv" title="Facebook" target="_blank">
+            <img src="images/facebook.svg" alt="Facebook" />
+        </a>
+        <a href="https://www.twitter.com/isra_mv" title="Twitter" target="_blank">
+            <img src="images/twitter.svg" alt="Twitter" />
+        </a>
+        <a href="https://www.instagram.com/isra.mv" target="Instagram" target="_blank">
+            <img src="images/instagram.svg" alt="Instagram">
+        </a>
+        <a href="#about" id="about-link">
+            <span lang="en">About</span>
+            <span lang="es">Acerca de</span>
+            <code>cursiva-js</code>
+        </a>
+    </footer>
+    <aside id="about" class="about-overlay">
+        <div class="about">
+            <div lang="es">
+                <h2>Acerca de <code>cursiva-js</code></h2>
+                <p><code>cursiva-js</code> es un experimento sobre el dibujado de escritura cursiva sobre un elemento
+                    <code>&lt;canvas&gt;</code> de HTML.</p>
+                <p>El c&oacute;digo est&aacute; hecho completamente en JavaScript (ECMAScript 6), sin frameworks o
+                    librer&iacute;as de terceros.</p>
+                <p>Algunas funciones fueron prototipadas para crear el dibujado con animaci&oacute; en el canvas,
+                    siguiendo las f&oacute;rmulas
+                    para curvas descritas en <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve"
+                        target="_blank">este art&iacute;culo</a>.</p>
+                <h3>Navegadores soportados</h3>
+                <p>Cualquier navegador moderno debe poder correr la aplicaci&oacute;n sin problemas, ya que se utiliza
+                    puro c&oacute;digo est&aacute;ndar.</p>
+                <p>Se a&ntilde;adieron algunos polyfills para Internet Explorer 11.</p>
+                <h3>Desarrollo</h3>
+                <p>Se utiliz&oacute; Visual Studio Code para el desarrollo.</p>
+                <p>La aplicaci&oacute;n corre sobre un proyecto en <a href="https://webpack.js.org/"
+                        target="_blank">webpack</a>,
+                    configurado con <a href="https://babeljs.io/" target="_blank">Babel</a> para convertir a <abbr
+                        title="ECMAScript 5">ES5</abbr>.</p>
+                <h3>Recursos</h3>
+                <ul>
+                    <li>Fuentes Roboto y Roboto Mono, de <a href="https://fonts.google.com/" target="_blank">Google
+                            Fonts</a>.</li>
+                    <li>&Iacute;conos para el pie de p&aacute;gina, de <a href="https://materialdesignicons.com/"
+                            target="_blank">Material Design Icons</a>.</li>
+                </ul>
+            </div>
+            <div lang="en">
+                <h2>About <code>cursiva-js</code></h2>
+                <p><code>cursiva-js</code> is an experiment about drawing script typing on a <code>&lt;canvas&gt;</code>
+                    HTML element.</p>
+                <p>The code is made in pure JavaScript (ECMAScript 6), with no use of third-party frameworks or
+                    libraries.</p>
+                <p>Some prototyping functions were added for creating animated drawing in a canvas, following the
+                    formulas for curves
+                    as described in <a href="https://es.wikipedia.org/wiki/Curva_de_B%C3%A9zier" target="_blank">this
+                        article</a>.</p>
+                <h3>Supported browsers</h3>
+                <p>Any modern browser should be able to run the application with no issues, since it's made with
+                    standard code.</p>
+                <p>Some polyfills were made to fix issues in Internet Explorer 11.</p>
+                <h3>Development</h3>
+                <p>Visual Studio Code was used for development.</p>
+                <p>The application runs on a <a href="https://webpack.js.org/" target="_blank">webpack</a> project,
+                    configured with <a href="https://babeljs.io/" target="_blank">Babel</a> to convert to <abbr
+                        title="ECMAScript 5">ES5</abbr>.</p>
+                <h3>Resources</h3>
+                <ul>
+                    <li>Roboto and Roboto Mono fonts, from <a href="https://fonts.google.com/" target="_blank">Google
+                            Fonts</a>.</li>
+                    <li>Footer icons from <a href="https://materialdesignicons.com/" target="_blank">Material Design
+                            Icons</a>.</li>
+                </ul>
+            </div>
+            <button id="about-close" class="close-about">
+                <span lang="en">Close</span>
+                <span lang="es">Cerrar</span>
+            </button>
+        </div>
+    </aside>
 </body>
+
 </html>
