@@ -1,7 +1,7 @@
 {
-    "name": "cursiva",
-    "version": "0.2.0",
-    "description": "Script typing.",
+    "name": "cursiva-js",
+    "version": "1.0.0",
+    "description": "JavaScript experiment for drawing text in script typing.",
     "scripts": {
         "build": "webpack --mode production --progress --colors",
         "watch": "webpack --watch --mode development --progress --colors --port 1000",

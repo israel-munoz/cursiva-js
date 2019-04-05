@@ -18,7 +18,6 @@ module.exports = {
         port: 1000,
         watchContentBase: true
     },
-    watch: true,
     watchOptions: {
         ignored: /node_modules/
     },

@@ -18,6 +18,7 @@
     require('./assets/images/banner.png');
     require('./assets/images/email.svg');
     require('./assets/images/facebook.svg');
+    require('./assets/images/github.svg');
     require('./assets/images/instagram.svg');
     require('./assets/images/linkedin.svg');
     require('./assets/images/twitter.svg');

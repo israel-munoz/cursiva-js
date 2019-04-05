@@ -107,6 +107,9 @@
         <a href="mailto:israel.munoz.v@gmail.com" title="israel.munoz.v@gmail.com">
             <img src="images/email.svg" alt="Email" />
         </a>
+        <a href="https://github.com/israel-munoz" title="GitHub" target="_blank">
+            <img src="images/github.svg" alt="GitHub">
+        </a>
         <a href="https://www.linkedin.com/in/israelmunoz" title="LinkedIn" target="_blank">
             <img src="images/linkedin.svg" alt="LinkedIn" />
         </a>
@@ -127,8 +130,11 @@
     </footer>
     <aside id="about" class="about-overlay">
         <div class="about">
-            <div lang="es">
-                <h2>Acerca de <code>cursiva-js</code></h2>
+            <div class="about-header">
+                <h2 lang="es">Acerca de <code>cursiva-js</code></h2>
+                <h2 lang="en">About <code>cursiva-js</code></h2>
+            </div>
+            <div class="about-content" lang="es">
                 <p><code>cursiva-js</code> es un experimento sobre el dibujado de escritura cursiva sobre un elemento
                     <code>&lt;canvas&gt;</code> de HTML.</p>
                 <p>El c&oacute;digo est&aacute; hecho completamente en JavaScript (ECMAScript 6), sin frameworks o
@@ -142,6 +148,9 @@
                     puro c&oacute;digo est&aacute;ndar.</p>
                 <p>Se a&ntilde;adieron algunos polyfills para Internet Explorer 11.</p>
                 <h3>Desarrollo</h3>
+                <p>El c&oacute;digo est&aacute; disponible en <a href="https://github.com/israel-munoz/cursiva"
+                    target="_blank">https://github.com/israel-munoz/cursiva</a>. Se requiere Node 8.x o superior
+                    para correrlo.</p>
                 <p>Se utiliz&oacute; Visual Studio Code para el desarrollo.</p>
                 <p>La aplicaci&oacute;n corre sobre un proyecto en <a href="https://webpack.js.org/"
                         target="_blank">webpack</a>,
@@ -155,8 +164,7 @@
                             target="_blank">Material Design Icons</a>.</li>
                 </ul>
             </div>
-            <div lang="en">
-                <h2>About <code>cursiva-js</code></h2>
+            <div class="about-content" lang="en">
                 <p><code>cursiva-js</code> is an experiment about drawing script typing on a <code>&lt;canvas&gt;</code>
                     HTML element.</p>
                 <p>The code is made in pure JavaScript (ECMAScript 6), with no use of third-party frameworks or
@@ -170,6 +178,8 @@
                     standard code.</p>
                 <p>Some polyfills were made to fix issues in Internet Explorer 11.</p>
                 <h3>Development</h3>
+                <p>Code is available at <a href="https://github.com/israel-munoz/cursiva"target="_blank">https://github.com/israel-munoz/cursiva</a>.
+                    It requires Node.JS 8.x or higher to run.</p>
                 <p>Visual Studio Code was used for development.</p>
                 <p>The application runs on a <a href="https://webpack.js.org/" target="_blank">webpack</a> project,
                     configured with <a href="https://babeljs.io/" target="_blank">Babel</a> to convert to <abbr
@@ -182,10 +192,12 @@
                             Icons</a>.</li>
                 </ul>
             </div>
-            <button id="about-close" class="close-about">
-                <span lang="en">Close</span>
-                <span lang="es">Cerrar</span>
-            </button>
+            <div class="about-footer">
+                <button id="about-close" class="close-about">
+                    <span lang="en">Close</span>
+                    <span lang="es">Cerrar</span>
+                </button>
+            </div>
         </div>
     </aside>
 </body>
