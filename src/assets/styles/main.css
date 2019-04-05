@@ -1,67 +1,218 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
 body {
+    height: 100vh;
+    width: 100vw;
+}
+
+html *[lang=es] {
+    display: none;
+}
+
+html[lang=es] *[lang=es] {
+    display: initial;
+}
+
+html[lang=es] *[lang=en] {
+    display: none;
+}
+
+body {
+    margin: 0;
+    font-family: roboto, 'segoe ui', sans-serif;
+    font-size: 16px;
+}
+
+.banner {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 100%;
+}
+
+header {
+    background: #6f7d8f;
+    color: #ececec;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+header h1 {
+    font-family: 'roboto mono', consolas, courier, monospace;
+    font-size: 1.5rem;
+    line-height: 3rem;
     margin: 0;
 }
 
-body {
-    font-family: 'segoe ui', sans-serif;
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
+header .lang {
+    text-align: center;
 }
 
-input, button {
-    font-family: inherit;
-    font-size: 100%;
-    height: 1.8em;
+header .lang button {
+    background-color: transparent;
+    color: inherit;
+    border: none .08rem #ececec;
+    outline: none;
+    padding: .3rem .7rem;
+    border-radius: .5rem;
+}
+
+html header .lang button[data-lang=en],
+html[lang=es] header .lang button[data-lang=es] {
+    border-style: solid;
+}
+
+html[lang=es] header .lang button[data-lang=en] {
+    border-style: none;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 3rem);
 }
 
 .controls {
-    background-color: #f6f6ff;
-    background-image: linear-gradient(0deg, rgba(0, 0, 0, .3) 0, transparent 5%);
-    align-items: center;
-    justify-content: space-around;
-    flex: 0 3em;
-    display: flex;
-    font-size: 200%;
+    overflow: auto;
 }
 
-.controls label {
+.control {
     display: flex;
     align-items: center;
-    flex: 0 20%;
-    justify-content: space-between;
+    padding: .5em 1em;
 }
 
-.controls input {
-    flex: 0 70%;
-    width: 70%;
+.control label {
+    flex: 0 0 50%;
 }
 
-.controls button {
+.control textarea,
+.control input,
+.control button {
+    font-family: inherit;
+    font-size: 100%;
     flex: 1;
 }
 
-.controls button.run {
-    position: relative;
+.control textarea,
+.control input[type=color] {
+    border: solid 1px #6f7d8f;
+    border-radius: .15em;
 }
 
-.controls button.run span {
+.control textarea {
+    height: 3em;
+    resize: vertical;
+}
+
+.control input[type=color] {
+    background-color: transparent;
+    cursor: pointer;
+    height: 1.8em;
+    padding: 0;
+}
+
+.control input[type=range]::-webkit-slider-thumb {
+    cursor: pointer;
+}
+
+.control input[type=range]::-moz-range-thumb {
+    cursor: pointer;
+}
+
+.control input[type=range]::-ms-thumb {
+    cursor: pointer;
+}
+
+.control input[type=color]::-webkit-color-swatch-wrapper {
+    padding: .1rem;
+    border: none;
+}
+
+.control button {
+    cursor: pointer;
+    height: 2em;
+    color: #3f4b5a;
+    background-color: #d0dff3;
+    border: solid 1px #6f7d8f;
+    box-shadow: 0 .1rem .1rem rgba(0, 0, 0, .3);
+    border-radius: .25rem;
+    font-weight: 500;
+    position: relative;
+    transition:
+        background-color .1s linear,
+        transform .1s linear,
+        box-shadow .1s linear,
+        border-color .1s linear;
+}
+
+.control button:hover,
+.control button:focus {
+    background-color: #ebf3fc;
+    outline: none;
+}
+
+.control button:active {
+    background-color: #b4cae4;
+    transform: translateY(.1rem);
+    box-shadow: 0 0 .1rem rgba(0, 0, 0, .3);
+    border-color: #6f7d8f;
+}
+
+.control button > span {
     position: absolute;
     width: 100%;
     top: 0;
     left: 0;
-    transform-origin: 50% 50%;
-    transition: transform .2s linear;
+    line-height: 2em;
+    transition: transform .1s linear;
 }
 
-.controls button.run .stop,
-body.running .controls button.run .run {
+.control button span.stop {
     transform: scale(0);
 }
 
-.controls button.run .run,
-body.running .controls button.run .stop {
+body.running .control button span.run {
+    transform: scale(0);
+}
+
+body.running .control button span.stop {
     transform: scale(1);
+}
+
+.chars {
+    padding: 1rem;
+}
+
+.chars button {
+    background: none;
+    border: none;
+    outline: none;
+    padding: .5rem 0;
+    color: #00c;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.chars pre {
+    border: solid 1px #d0dff3;
+    border-radius: .25rem;
+    padding: 1rem;
+    background-color: #f2f5f8;
+    color: #3f4b5a;
+    display: none;
+    white-space: normal;
+}
+
+.chars.show pre {
+    display: block;
 }
 
 .canvas-container {
@@ -69,8 +220,104 @@ body.running .controls button.run .stop {
     overflow: auto;
 }
 
-canvas {
+.canvas-container canvas {
     display: block;
-    width: 100%;
     height: 100%;
+    width: 100%;
+}
+
+footer {
+    font-size: 90%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: .8;
+    background: #fff;
+    width: 30em;
+}
+
+footer img {
+    font-size: 1.5em;
+    width: 1em;
+    height: 1em;
+}
+
+aside.about-overlay {
+    background-color: rgba(255, 255, 255, .3);
+    position: fixed;
+    top: 0;
+    height: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+}
+
+aside.about-overlay.show {
+    display: block;
+}
+
+.about {
+    background: #eaedf3;
+    width: 40rem;
+    margin: 5em auto;
+    padding: 1em;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, .3);
+}
+
+.about h2 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.about code {
+    font-family: 'roboto mono', consolas, courier, monospace;
+}
+
+.about h3 {
+    font-weight: 500;
+}
+
+.about button {
+    display: block;
+    margin: 0 0 0 auto;
+    font-size: 110%;
+    background: #6f7a88;
+    border: solid .1rem #eef1f5;
+    border-radius: .4rem;
+    color: #eef1f5;
+    padding: .5rem .8rem;
+}
+
+@media screen and (min-width: 1024px) {
+    main {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    header {
+        flex: 0 0 100%;
+    }
+
+    .controls,
+    .canvas-container {
+        height: 100%;
+    }
+
+    .controls {
+        flex: 0 0 30rem;
+        order: 1;
+        border-left: solid 1px #6f7d8f;
+    }
+
+    .control label {
+        flex-basis: 40%;
+    }
+
+    .canvas-container {
+        order: 0;
+    }
 }
