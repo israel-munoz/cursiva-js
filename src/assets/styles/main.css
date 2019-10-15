@@ -57,7 +57,7 @@ header .lang {
 
 header .lang button {
     cursor: pointer;
-    background-color: transparent;
+    background-color: #525566;
     color: inherit;
     border: none .08rem #ececec;
     outline: none;
