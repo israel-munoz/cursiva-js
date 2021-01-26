@@ -12,21 +12,21 @@ const { CanvasRenderingContext2D } = window;
   require('./assets/styles/main.css');
   require('./helpers');
 
-  var langButtons;
-  var textInput;
-  var textSize;
-  var textSpeed;
-  var checkGuideColor;
-  var textGuideColor;
-  var checkDrawColor;
-  var textDrawColor;
-  var runButton;
-  var charsButton;
-  var charsList;
-  var canvas;
-  var ctx;
-  var aboutLink;
-  var aboutClose;
+  let langButtons;
+  let textInput;
+  let textSize;
+  let textSpeed;
+  let checkGuideColor;
+  let textGuideColor;
+  let checkDrawColor;
+  let textDrawColor;
+  let runButton;
+  let charsButton;
+  let charsList;
+  let canvas;
+  let ctx;
+  let aboutLink;
+  let aboutClose;
 
   const settings = {
     size: 1,
