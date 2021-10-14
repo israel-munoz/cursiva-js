@@ -1,4 +1,4 @@
-const { resolve, join } = require('path');
+const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -12,20 +12,12 @@ module.exports = {
   },
   devtool: isProduction ? null : 'inline-source-map',
   devServer: {
-    contentBase: join(__dirname, 'dist'),
     compress: true,
     port: 1000,
-    watchContentBase: true,
     headers: {
       'Cache-Cotrol': 'max-age=31536000'
     }
   },
-  // watchOptions: {
-  //   ignored: /node_modules/
-  // },
-  // resolve: {
-  //   extensions: ['.js']
-  // },
   module: {
     rules: [{
       test: /\.js$/,
